@@ -18,35 +18,32 @@ func main() {
 	userName := "coloque su usario aqui"
 	password := "coloque su clave aqui"
 
-	//bindUsername := "cn=asantana,dc=umag,dc=cl" // Reemplaza con tu nombre de usuario
-	bindUsername := "uid=" + userName + ",ou=usuarios,dc=umag,dc=cl" // Reemplaza con tu nombre de usuario
-	bindPassword := password                                         // Reemplaza con tu contraseña
+	//bindUsername := "cn=asantana,dc=umag,dc=cl"
+	bindUsername := "uid=" + userName + ",ou=usuarios,dc=umag,dc=cl"
+	bindPassword := password
 
 	err = l.Bind(bindUsername, bindPassword)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	userDN := "uid=" + userName + ",ou=usuarios,dc=umag,dc=cl"        // Reemplaza con el DN del usuario
-	attributes := []string{"gecos", "employeetype", "employeenumber"} // Reemplaza con los atributos que necesitas
+	userDN := "uid=" + userName + ",ou=usuarios,dc=umag,dc=cl"
+	attributes := []string{"gecos", "employeetype", "employeenumber"}
 
-	// Realiza la búsqueda del usuario
 	searchRequest := ldap.NewSearchRequest(
-		userDN,               // Base DN (Distinguished Name)
-		ldap.ScopeBaseObject, // Alcance de búsqueda (base)
+		userDN,
+		ldap.ScopeBaseObject,
 		ldap.NeverDerefAliases, 0, 0, false,
-		"(objectClass=*)", // Filtro de búsqueda (todos los objetos)
-		attributes,        // Atributos a recuperar
+		"(objectClass=*)",
+		attributes,
 		nil,
 	)
 
-	// Realiza la búsqueda
 	sr, err := l.Search(searchRequest)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Imprime los resultados
 	for _, entry := range sr.Entries {
 		fmt.Println("DN:", entry.DN)
 		for _, attr := range entry.Attributes {
